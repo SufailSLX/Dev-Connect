@@ -1,43 +1,54 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { useState } from "react"
-import { useAppDispatch } from "@/store"
-import { login } from "@/store/slices/authSlice"
+import { useDispatch } from "react-redux"
+import { AppDispatch } from "@/store/store"
+import { login } from "@/store/authSlice"
+import { useRouter } from "next/navigation"
 
 export default function LoginPage() {
-  const dispatch = useAppDispatch()
+  const dispatch = useDispatch<AppDispatch>()
+  const router = useRouter()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // later: connect with backend
-    dispatch(login({ user: { id: "1", email }, token: "mock-token" }))
+    const result = await dispatch(login({ email, password }))
+    if (login.fulfilled.match(result)) {
+      router.push("/dashboard")
+    } else {
+      alert("Login failed")
+    }
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <form
         onSubmit={handleSubmit}
-        className="flex w-full max-w-md flex-col gap-4 rounded-xl border p-6 shadow-md"
+        className="bg-white p-6 rounded-2xl shadow-md w-96 space-y-4"
       >
-        <h2 className="text-2xl font-bold">Login</h2>
-        <Input
-          type="email"
+        <h1 className="text-xl font-bold">Login</h1>
+        <input
+          className="w-full border p-2 rounded"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
-        <Input
+        <input
+          className="w-full border p-2 rounded"
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <Button type="submit">Login</Button>
+        <button
+          type="submit"
+          className="w-full bg-blue-500 text-white py-2 rounded"
+        >
+          Login
+        </button>
       </form>
-    </main>
+    </div>
   )
 }
