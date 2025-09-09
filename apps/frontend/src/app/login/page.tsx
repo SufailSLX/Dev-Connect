@@ -1,12 +1,15 @@
 "use client"
 
-import { useState } from "react"
+import { AppDispatch } from "@/store/store"
 import { useDispatch } from "react-redux"
 import { AppDispatch } from "@/store/store"
 import { login } from "@/store/authSlice"
 import { useRouter } from "next/navigation"
+import { useRouter } from "next/navigation"
 
 export default function LoginPage() {
+  const dispatch = useDispatch<AppDispatch>()
+  const router = useRouter()
   const dispatch = useDispatch<AppDispatch>()
   const router = useRouter()
   const [email, setEmail] = useState("")
@@ -15,6 +18,11 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     const result = await dispatch(login({ email, password }))
+    if (login.fulfilled.match(result)) {
+      router.push("/dashboard")
+    } else {
+      alert("Login failed")
+    }
     if (login.fulfilled.match(result)) {
       router.push("/dashboard")
     } else {
@@ -32,10 +40,12 @@ export default function LoginPage() {
         <input
           className="w-full border p-2 rounded"
           placeholder="Email"
+          className="w-full border p-2 rounded"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
         <input
+          className="w-full border p-2 rounded"
           className="w-full border p-2 rounded"
           type="password"
           placeholder="Password"
@@ -43,6 +53,11 @@ export default function LoginPage() {
           onChange={(e) => setPassword(e.target.value)}
         />
         <button
+          type="submit"
+          className="w-full bg-blue-500 text-white py-2 rounded"
+        >
+          Login
+        </button>
           type="submit"
           className="w-full bg-blue-500 text-white py-2 rounded"
         >
