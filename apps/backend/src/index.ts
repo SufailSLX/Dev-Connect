@@ -13,8 +13,30 @@ app.use(express.json())
 
 app.use("/api/auth", authRoutes)
 
-connectDB(MONGO_URI).then(() => {
+const startServer = async () => {
+  let retries = 3
+  
+  while (retries > 0) {
+    try {
+      await connectDB(MONGO_URI)
+      break
+    } catch (error) {
+      retries--
+      console.log(`❌ MongoDB connection failed. Retries left: ${retries}`)
+      
+      if (retries === 0) {
+        console.error("❌ Failed to connect to MongoDB after multiple attempts")
+        process.exit(1)
+      }
+      
+      // Wait 5 seconds before retrying
+      await new Promise(resolve => setTimeout(resolve, 5000))
+    }
+  }
+  
   app.listen(PORT, () => {
     console.log(`🌍 Server running at http://localhost:${PORT}`)
   })
-})
+}
+
+startServer()
