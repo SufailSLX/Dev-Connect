@@ -7,7 +7,6 @@ export const connectDB = async (MONGO_URI: string) => {
       socketTimeoutMS: 45000, // Socket timeout
       connectTimeoutMS: 10000, // Connection timeout
       maxPoolSize: 10, // Maintain up to 10 socket connections
-      serverSelectionRetryDelayMS: 5000, // Retry delay
       heartbeatFrequencyMS: 10000, // Heartbeat frequency
     })
     console.log("✅ MongoDB connected")
